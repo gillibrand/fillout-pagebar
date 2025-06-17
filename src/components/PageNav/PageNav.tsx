@@ -30,9 +30,12 @@ function showAt(el: HTMLElement, e: { clientX: number; clientY: number }) {
   el.style.top = `${e.clientY}px`;
 }
 
+const ThresholdPx = 5;
+
 function onDown(
   downEvent: React.PointerEvent<HTMLElement>,
-  onChangePageOrder: (id: string[]) => void
+  onReorder: (id: string[]) => unknown,
+  onPageChange: (id: string) => unknown
 ) {
   downEvent.preventDefault();
 
@@ -40,15 +43,18 @@ function onDown(
   if (!target) return;
 
   // TODO: handle scrolled page offset
-  // const startX = e.clientX;
-  // const startY = e.clientY;
+  const startX = downEvent.clientX;
+  // const startY = downEvent.clientY;
+
+  // Only count it as a drag if past ThresholdPx, otherwise it's a wiggly click
+  let overThreshold = false;
 
   let dropTargets: null | DropTarget[] = null;
   let isDrag = false;
 
   const pageNav = target.closest(".PageNav") as HTMLDivElement;
-  const draggedButton = target.closest(".PageNavButton") as HTMLDivElement;
-  if (!pageNav || !draggedButton) return;
+  const clickedButton = target.closest(".PageNavButton") as HTMLDivElement;
+  if (!pageNav || !clickedButton) return;
 
   let avatar: HTMLElement | null;
 
@@ -56,7 +62,7 @@ function onDown(
 
   function cleanUp() {
     if (avatar) document.body.removeChild(avatar);
-    draggedButton.style.visibility = "";
+    clickedButton.style.visibility = "";
 
     pageNav.removeEventListener("pointermove", onMove);
     pageNav.removeEventListener("pointerup", onUp);
@@ -67,6 +73,8 @@ function onDown(
 
     if (!isDrag) {
       console.info(">>> click");
+      const clickedId = clickedButton.dataset["id"]!;
+      onPageChange(clickedId);
       // TODO: if no movement, treat as button click
     } else {
       console.info(">>> drop", dropTargets);
@@ -74,7 +82,7 @@ function onDown(
       const newIdOrder = (
         Array.from(pageNav.querySelectorAll(".PageNavButton")) as HTMLElement[]
       ).map((el) => el.dataset["id"]!);
-      onChangePageOrder(newIdOrder);
+      onReorder(newIdOrder);
     }
 
     cleanUp();
@@ -84,13 +92,13 @@ function onDown(
     if (dropTargets !== null) return;
 
     // Create drag avatar to follow pointer
-    avatar = cloneForDragAvatar(draggedButton);
+    avatar = cloneForDragAvatar(clickedButton);
     document.body.appendChild(avatar);
 
     showAt(avatar, downEvent);
 
     // Hide original button, but still take up space
-    draggedButton.style.visibility = "hidden";
+    clickedButton.style.visibility = "hidden";
 
     const buttons = Array.from(
       pageNav.querySelectorAll(".PageNavButton")
@@ -157,7 +165,7 @@ function onDown(
     // rects and start the animation
     const parent = dropTarget.refNode.parentNode!;
     parent.insertBefore(
-      draggedButton,
+      clickedButton,
       dropTarget.position === "before"
         ? dropTarget.refNode
         : dropTarget.refNode.nextElementSibling
@@ -178,6 +186,15 @@ function onDown(
   }
 
   function onMove(e: PointerEvent) {
+    if (!overThreshold) {
+      if (Math.abs(e.clientX - startX) > ThresholdPx) {
+        overThreshold = true;
+      } else {
+        // not moved far enough
+        return;
+      }
+    }
+
     initDropTargetsAndSpacer();
     if (!dropTargets || !avatar) return;
 
@@ -217,21 +234,28 @@ export interface PageInfo {
 
 interface Props {
   pages: PageInfo[];
+  activePageId: string;
   onPagesChange: (pages: PageInfo[]) => unknown;
+  onPageClick: (id: string) => unknown;
 }
 
-export function PageNav({ pages, onPagesChange }: Props) {
+export function PageNav({
+  pages,
+  onPagesChange,
+  onPageClick,
+  activePageId,
+}: Props) {
   function handlePointerDown(e: React.PointerEvent<HTMLElement>) {
     /**
      * @param ids New order of page IDs to rerender.
      */
-    function handleChangePageOrder(ids: string[]) {
+    function handleReorder(ids: string[]) {
       const pageMap = new Map(pages.map((page) => [page.id, page]));
       const newPages = ids.map((id) => pageMap.get(id)!);
       onPagesChange(newPages);
     }
 
-    onDown(e, handleChangePageOrder);
+    onDown(e, handleReorder, onPageClick);
   }
 
   return (
@@ -243,6 +267,7 @@ export function PageNav({ pages, onPagesChange }: Props) {
           label={page.label}
           href={page.href}
           onPointerDown={handlePointerDown}
+          isActive={page.id === activePageId}
         />
       ))}
     </div>

@@ -13,14 +13,25 @@ const initialPages: PageInfo[] = [
 function App() {
   const [pages, setPages] = useState(initialPages);
 
+  const [activePageId, setActivePageId] = useState(pages[0].id);
+
   const handlePagesChange = useCallback((newPages: PageInfo[]) => {
     console.info(">>> newPages", newPages);
     setPages(newPages);
   }, []);
 
+  function handlePageClick(id: string) {
+    setActivePageId(id);
+  }
+
   return (
     <main className="App">
-      <PageNav pages={pages} onPagesChange={handlePagesChange} />
+      <PageNav
+        pages={pages}
+        onPagesChange={handlePagesChange}
+        activePageId={activePageId}
+        onPageClick={handlePageClick}
+      />
     </main>
   );
 }

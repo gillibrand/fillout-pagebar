@@ -1,3 +1,4 @@
+import { cx } from "@util/cx";
 import "./PageNavButton.css";
 
 interface Props {
@@ -5,12 +6,22 @@ interface Props {
   label: string;
   href: string;
   onPointerDown: React.PointerEventHandler;
-  //   onMouseUp: React.MouseEventHandler;
+  isActive: boolean;
 }
 
-export function PageNavButton({ id, label, href, onPointerDown }: Props) {
+export function PageNavButton({
+  id,
+  label,
+  href,
+  isActive,
+  onPointerDown,
+}: Props) {
   return (
-    <div className="PageNavButton" onPointerDown={onPointerDown} data-id={id}>
+    <div
+      className={cx("PageNavButton", { "is-active": isActive })}
+      onPointerDown={onPointerDown}
+      data-id={id}
+    >
       <a href={href}>{label}</a>
       <button className="PageNavButton__menu-button">︙</button>
     </div>
