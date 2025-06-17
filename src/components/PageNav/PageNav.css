@@ -1,0 +1,11 @@
+.PageNav {
+  display: flex;
+  gap: 1rem;
+}
+
+.drag-avatar {
+  position: absolute;
+  z-index: 9999;
+  opacity: 0.9;
+  pointer-events: none;
+}
