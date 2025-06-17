@@ -62,7 +62,7 @@ function onDown(
 
   function cleanUp() {
     if (avatar) document.body.removeChild(avatar);
-    clickedButton.style.visibility = "";
+    clickedButton.classList.remove("invisible");
 
     pageNav.removeEventListener("pointermove", onMove);
     pageNav.removeEventListener("pointerup", onUp);
@@ -98,7 +98,7 @@ function onDown(
     showAt(avatar, downEvent);
 
     // Hide original button, but still take up space
-    clickedButton.style.visibility = "hidden";
+    clickedButton.classList.add("invisible");
 
     const buttons = Array.from(
       pageNav.querySelectorAll(".PageNavButton")
@@ -267,6 +267,7 @@ export function PageNav({
           label={page.label}
           href={page.href}
           onPointerDown={handlePointerDown}
+          onClick={onPageClick}
           isActive={page.id === activePageId}
         />
       ))}
