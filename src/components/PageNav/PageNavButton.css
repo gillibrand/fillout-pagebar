@@ -8,8 +8,10 @@
   border-radius: 0.5rem;
   padding: 0.25rem 0.5rem;
   color: #677289;
+  cursor: pointer;
 
   display: flex;
+  align-items: center;
   gap: 0.25rem;
 
   a,
@@ -25,24 +27,42 @@
 
 .PageNavButton__menu-button {
   appearance: none;
+  padding: 0;
   background-color: transparent;
   border: none;
-  cursor: pointer;
   visibility: hidden;
   outline: none;
   border-radius: 0.25rem;
+  color: #9da4b2;
+  cursor: pointer;
 
-  &:focus-visible {
+  &:focus-visible,
+  &:hover {
     background-color: rgba(0 0 0 / 0.1);
+  }
+
+  svg {
+    /* Gross, but using quickly downloaded icons they aren't all visually centered. Would to go UX or fix the icon in real life */
+    position: relative;
+    top: 2px;
   }
 }
 
+.PageNavButton__icon {
+  color: #9da4b2;
+}
+
 .PageNavButton.is-active,
-.PageNavButton:has(:focus-visible) {
+/* .PageNavButton:has(:focus-visible), */
+.PageNavButton:has(:focus) {
   color: #1a1a1a;
   background-color: white;
   border-color: #e1e1e1;
   box-shadow: var(--box-shadow);
+
+  .PageNavButton__icon {
+    color: #f59d0b;
+  }
 }
 
 .PageNavButton.invisible {

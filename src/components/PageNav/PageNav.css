@@ -1,7 +1,7 @@
 .PageNav {
   display: flex;
-  align-items: center;
-  /* gap: 1rem; */
+  align-items: stretch;
+
   position: relative;
 
   &::before {
@@ -11,7 +11,7 @@
     height: 1px;
     border-block-start: 1px #c0c0c0 dashed;
 
-    inset-block-start: calc(50% - px);
+    inset-block-start: calc(50% - 1px);
   }
 
   /* All children need to be above the dotted line */

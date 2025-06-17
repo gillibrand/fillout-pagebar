@@ -1,5 +1,7 @@
 import { cx } from "@util/cx";
 import "./PageNavButton.css";
+import Doc from "@icons/doc.svg?react";
+import More from "@icons/more.svg?react";
 
 interface Props {
   id: string;
@@ -38,10 +40,13 @@ export function PageNavButton({
       onPointerDown={onPointerDown}
       data-page-id={id}
     >
+      <Doc className="PageNavButton__icon" />
       <a href={href} onClick={handleAnchorClick}>
         {label}
       </a>
-      <button className="PageNavButton__menu-button">︙</button>
+      <button className="PageNavButton__menu-button">
+        <More />
+      </button>
     </div>
   );
 }

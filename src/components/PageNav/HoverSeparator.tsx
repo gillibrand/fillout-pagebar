@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import "./HoverSeparator.css";
 import { cx } from "@util/cx";
+import Plus from "@icons/add.svg?react";
 
 /**
  * Component used between pages in the PageNav. This shows as a small dot on initial hover, then
@@ -31,7 +32,7 @@ export function HoverSeparator() {
       onPointerLeave={handleLeave}
     >
       <button className="HoverSeparator__button">
-        <span>➕</span>
+        <Plus className="HoverSeparator__icon" />
       </button>
     </div>
   );

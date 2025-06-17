@@ -1,3 +1,5 @@
+import { Rect } from "./types";
+
 export function isInsideRect(event: PointerEvent, rect: Rect): boolean {
   const { clientX, clientY } = event;
   return (
