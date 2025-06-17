@@ -1,5 +1,5 @@
 import { useAnimateReorder } from "@hooks/useAnimateReorder";
-import { useRef } from "react";
+import { ReactElement, useRef } from "react";
 import { HoverSeparator } from "./HoverSeparator";
 import "./PageNav.css";
 import { PageNavButton } from "./PageNavButton";
@@ -211,6 +211,8 @@ export interface PageInfo {
   id: string;
   label: string;
   href: string;
+  /** Custom icon. Uses doc icon if not provided. */
+  icon?: ReactElement;
 }
 
 interface Props {
@@ -256,6 +258,7 @@ export function PageNav({
         // onPointerUp={handlePointerUp}
         onClick={onPageClick}
         isActive={page.id === activePageId}
+        icon={page.icon}
       />
     );
   }

@@ -3,11 +3,14 @@ import "./App.css";
 import { PageNav } from "@components/PageNav";
 import { PageInfo } from "@components/PageNav/PageNav";
 
+import Info from "@icons/info.svg?react";
+import Check from "@icons/check.svg?react";
+
 const initialPages: PageInfo[] = [
-  { id: "1", label: "Info", href: "#/info" },
+  { id: "1", label: "Info", href: "#/info", icon: <Info /> },
   { id: "2", label: "Details", href: "#/detail" },
   { id: "3", label: "Other", href: "#/other" },
-  { id: "4", label: "Ending", href: "#/ending" },
+  { id: "4", label: "Ending", href: "#/ending", icon: <Check /> },
 ];
 
 function App() {

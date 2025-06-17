@@ -2,12 +2,14 @@ import { cx } from "@util/cx";
 import "./PageNavButton.css";
 import Doc from "@icons/doc.svg?react";
 import More from "@icons/more.svg?react";
+import { ReactElement } from "react";
 
 interface Props {
   id: string;
   label: string;
   href: string;
   isActive: boolean;
+  icon?: ReactElement;
 
   /**
    * On pointer down even that may be a click or drag.
@@ -28,6 +30,7 @@ export function PageNavButton({
   isActive,
   onPointerDown,
   onClick,
+  icon,
 }: Props) {
   function handleAnchorClick(e: React.MouseEvent) {
     e.preventDefault();
@@ -40,7 +43,8 @@ export function PageNavButton({
       onPointerDown={onPointerDown}
       data-page-id={id}
     >
-      <Doc className="PageNavButton__icon" />
+      <div className="PageNavButton__icon">{icon ?? <Doc />}</div>
+
       <a href={href} onClick={handleAnchorClick}>
         {label}
       </a>

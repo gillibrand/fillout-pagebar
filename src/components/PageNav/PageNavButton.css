@@ -50,6 +50,10 @@
 
 .PageNavButton__icon {
   color: #9da4b2;
+
+  svg {
+    display: block;
+  }
 }
 
 .PageNavButton.is-active,
