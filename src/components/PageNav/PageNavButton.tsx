@@ -27,13 +27,18 @@ export function PageNavButton({
   onPointerDown,
   onClick,
 }: Props) {
+  function handleAnchorClick(e: React.MouseEvent) {
+    e.preventDefault();
+    onClick(id);
+  }
+
   return (
     <div
       className={cx("PageNavButton", { "is-active": isActive })}
       onPointerDown={onPointerDown}
-      data-id={id}
+      data-page-id={id}
     >
-      <a href={href} onClick={() => onClick(id)}>
+      <a href={href} onClick={handleAnchorClick}>
         {label}
       </a>
       <button className="PageNavButton__menu-button">︙</button>

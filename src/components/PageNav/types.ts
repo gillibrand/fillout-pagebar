@@ -6,19 +6,14 @@ export interface Rect {
 }
 
 /**
- * A logical location to drop something during DnD. Can be compared to the location
- * of a move event and tracks the element the target is relative to.
+ * A logical location to drop something during DnD. These are "positioned" where drops occur (they
+ * are not in the DOM, we just check the coords). When dropped on, they know the position to drop at.
  */
 export interface DropTarget extends Rect {
   /**
-   * Whether this rect is before or after the ref node.
+   * Zero based index of where to insert after a drag and drop. This can be used during drag and drop to update as we go.
    */
-  position: Position;
-
-  /**
-   * The element to drop relative to.
-   */
-  refNode: HTMLElement;
+  insertAt: number;
 }
 
 export type Position = "after" | "before";

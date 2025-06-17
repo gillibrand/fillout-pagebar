@@ -1,6 +1,23 @@
 .PageNav {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  /* gap: 1rem; */
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    border-block-start: 1px #c0c0c0 dashed;
+
+    inset-block-start: calc(50% - px);
+  }
+
+  /* All children need to be above the dotted line */
+  & > * {
+    z-index: 1;
+  }
 }
 
 .drag-avatar {

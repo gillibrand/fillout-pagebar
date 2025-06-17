@@ -16,7 +16,6 @@ function App() {
   const [activePageId, setActivePageId] = useState(pages[0].id);
 
   const handlePagesChange = useCallback((newPages: PageInfo[]) => {
-    console.info(">>> newPages", newPages);
     setPages(newPages);
   }, []);
 

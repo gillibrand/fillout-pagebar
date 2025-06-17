@@ -1,0 +1,46 @@
+.HoverSeparator {
+  padding: 0 0.5rem;
+  transition: padding 100ms ease-in-out;
+
+  &.is-active {
+    padding: 0 1rem;
+  }
+}
+
+.HoverSeparator__button {
+  visibility: hidden;
+  appearance: none;
+  background-color: #677289;
+  border: solid 1px #677289;
+  box-shadow: var(--box-shadow);
+  border-radius: 999px;
+  padding: 0;
+  overflow: hidden;
+
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+
+  display: grid;
+  place-items: center;
+
+  .HoverSeparator:hover &,
+  .HoverSeparator:has(:focus-visible) & {
+    visibility: visible;
+  }
+
+  > * {
+    display: none;
+  }
+
+  .HoverSeparator.is-active & {
+    border: solid 1px #e1e1e1;
+    background-color: white;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    cursor: pointer;
+
+    > * {
+      display: block;
+    }
+  }
+}

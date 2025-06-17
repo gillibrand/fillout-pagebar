@@ -1,37 +1,23 @@
-import { animateMove } from "./animate";
+import { useAnimateReorder } from "@hooks/useAnimateReorder";
+import { useRef } from "react";
+import { HoverSeparator } from "./HoverSeparator";
 import "./PageNav.css";
 import { PageNavButton } from "./PageNavButton";
-import { DropTarget, Rect } from "./types";
-
-function isInsideRect(event: PointerEvent, rect: Rect): boolean {
-  const { clientX, clientY } = event;
-  return (
-    clientX >= rect.x &&
-    clientX <= rect.x + rect.width &&
-    clientY >= rect.y &&
-    clientY <= rect.y + rect.height
-  );
-}
-
-function cloneForDragAvatar(original: HTMLElement): HTMLElement {
-  const clone = original.cloneNode(true) as HTMLElement;
-
-  // Remove all IDs to avoid conflicts
-  if (clone.id) clone.removeAttribute("id");
-  clone.querySelectorAll("[id]").forEach((el) => el.removeAttribute("id"));
-
-  clone.classList.add("drag-avatar");
-
-  return clone;
-}
-
-function showAt(el: HTMLElement, e: { clientX: number; clientY: number }) {
-  el.style.left = `${e.clientX}px`;
-  el.style.top = `${e.clientY}px`;
-}
+import { DropTarget } from "./types";
+import { cloneForDragAvatar, isInsideRect, showAt } from "./drag-util";
 
 const ThresholdPx = 5;
 
+/**
+ *
+ *
+ * @param downEvent Mouse down event. Can be a click or drag, but don't know yet until mouse moves
+ * or goes up.
+ * @param onReorder Callback during DnD to reorder the pages. This callback will update the React
+ * state as we drag. Gets the new order of the page IDs.
+ * @param onPageChange Callback if a known click happens that can directly change the page. Get ID
+ * of clicked page.
+ */
 function onDown(
   downEvent: React.PointerEvent<HTMLElement>,
   onReorder: (id: string[]) => unknown,
@@ -44,7 +30,6 @@ function onDown(
 
   // TODO: handle scrolled page offset
   const startX = downEvent.clientX;
-  // const startY = downEvent.clientY;
 
   // Only count it as a drag if past ThresholdPx, otherwise it's a wiggly click
   let overThreshold = false;
@@ -58,8 +43,12 @@ function onDown(
 
   let avatar: HTMLElement | null;
 
+  // Lock pointer to this drag and allow moving off page
   pageNav.setPointerCapture(downEvent.pointerId);
 
+  /**
+   * Must call after mouseup or other abort to clean up any transient event listeners, etc.
+   */
   function cleanUp() {
     if (avatar) document.body.removeChild(avatar);
     clickedButton.classList.remove("invisible");
@@ -68,27 +57,29 @@ function onDown(
     pageNav.removeEventListener("pointerup", onUp);
   }
 
+  /**
+   * Callback when mouse is released. Might count as a click or end a drag.
+   */
   function onUp(e: PointerEvent) {
     pageNav.releasePointerCapture(e.pointerId);
 
     if (!isDrag) {
-      console.info(">>> click");
-      const clickedId = clickedButton.dataset["id"]!;
+      const clickedId = clickedButton.dataset.pageId!;
       onPageChange(clickedId);
-      // TODO: if no movement, treat as button click
     } else {
-      console.info(">>> drop", dropTargets);
-      // Pull new order from current DOM layout to tell React about the change
-      const newIdOrder = (
-        Array.from(pageNav.querySelectorAll(".PageNavButton")) as HTMLElement[]
-      ).map((el) => el.dataset["id"]!);
-      onReorder(newIdOrder);
+      // we moved and updated state during the drag itself, so nothing left to do.
     }
 
     cleanUp();
   }
 
-  function initDropTargetsAndSpacer() {
+  /**
+   * At the start of a drag operation we capture the bounding rect for every existing button.
+   * The rects are shifted so they are actually between every button. When dragging, we just compare
+   * the mouse location to the drop target refs. We don't want use mouseover like events since they require
+   * real DOM nodes, but are targets are not DOM nodes (again, since they are between buttons).
+   */
+  function initDropTargets() {
     if (dropTargets !== null) return;
 
     // Create drag avatar to follow pointer
@@ -114,8 +105,7 @@ function onDown(
         y: first.y,
         width: first.width,
         height: first.height,
-        position: "before",
-        refNode: buttons[0],
+        insertAt: 0,
       },
     ];
 
@@ -132,8 +122,7 @@ function onDown(
         y: a.y,
         width: right - left,
         height: a.height,
-        position: "before",
-        refNode: buttons[i],
+        insertAt: i,
       });
     }
 
@@ -144,47 +133,39 @@ function onDown(
       y: last.y,
       width: first.width,
       height: first.height,
-      position: "after",
-      refNode: buttons[buttons.length - 1],
+      insertAt: buttonRects.length,
     });
-
-    // dropTargets.forEach((dt) => debugRect(dt));
   }
 
+  /** Drop target we are currently over. */
   let currentTarget: null | DropTarget = null;
 
-  function moveDraggedButton(dropTarget: DropTarget) {
-    const allButtons = Array.from(
-      pageNav.querySelectorAll(".PageNavButton")
-    ) as HTMLElement[];
+  /**
+   * Figures out the new order of page IDs based on the current drop target. Fire the `onReorder` callback.
+   * @param dropTarget The drop target we're over and dropped on.
+   */
+  function reorderDraggedButton(dropTarget: DropTarget) {
+    const clickedId = clickedButton.dataset.pageId!;
 
-    // All buttons positions before the move
-    const beforeRects = allButtons.map((el) => el.getBoundingClientRect());
+    const oldIds = (
+      Array.from(pageNav.querySelectorAll(".PageNavButton")) as HTMLElement[]
+    ).map((el) => el.dataset.pageId!);
 
-    // Insert the button in new location. This won't display yet until we capture the new/after
-    // rects and start the animation
-    const parent = dropTarget.refNode.parentNode!;
-    parent.insertBefore(
-      clickedButton,
-      dropTarget.position === "before"
-        ? dropTarget.refNode
-        : dropTarget.refNode.nextElementSibling
-    );
+    const oldIndex = oldIds.indexOf(clickedId);
+    if (oldIndex === -1) return;
 
-    // Force reflow to get button positions after the move
-    void pageNav.offsetTop;
-    const afterRects = allButtons.map((el) => el.getBoundingClientRect());
+    const newIds = [...oldIds];
+    newIds.splice(oldIndex, 1);
+    newIds.splice(dropTarget.insertAt, 0, clickedId);
 
-    // Animate all nodes that need to move to new visual positions
-    for (let i = 0; i < beforeRects.length; i++) {
-      const button = allButtons[i];
-      const before = beforeRects[i];
-      const after = afterRects[i];
-
-      animateMove(button, before, after);
-    }
+    onReorder(newIds);
   }
 
+  /**
+   * Callback when the mouse moves. This will determine if we're far enough to consider this a drag
+   * and then start reordering on move if so.
+   * @param e Move event.
+   */
   function onMove(e: PointerEvent) {
     if (!overThreshold) {
       if (Math.abs(e.clientX - startX) > ThresholdPx) {
@@ -195,10 +176,9 @@ function onDown(
       }
     }
 
-    initDropTargetsAndSpacer();
+    initDropTargets();
     if (!dropTargets || !avatar) return;
 
-    void e;
     isDrag = true;
     showAt(avatar, e);
 
@@ -207,18 +187,16 @@ function onDown(
         const oldDropTarget = currentTarget;
         currentTarget = dropTarget;
 
-        if (
-          oldDropTarget?.refNode !== currentTarget.refNode ||
-          oldDropTarget?.position !== currentTarget.position
-        ) {
-          moveDraggedButton(currentTarget);
+        if (oldDropTarget?.insertAt !== currentTarget.insertAt) {
+          reorderDraggedButton(currentTarget);
         }
 
+        // bail after finding the target we're over whether same or diff
         return;
       }
     }
 
-    // Not over drop target.
+    // Not over any drop target
     currentTarget = null;
   }
 
@@ -226,6 +204,9 @@ function onDown(
   pageNav.addEventListener("pointermove", onMove);
 }
 
+/**
+ * Props to create a page in the bar.
+ */
 export interface PageInfo {
   id: string;
   label: string;
@@ -258,19 +239,34 @@ export function PageNav({
     onDown(e, handleReorder, onPageClick);
   }
 
+  const buttons = [];
+
+  for (const page of pages) {
+    if (buttons.length) {
+      buttons.push(<HoverSeparator key={`sep-${page.id}`} />);
+    }
+
+    buttons.push(
+      <PageNavButton
+        key={page.id}
+        id={page.id}
+        label={page.label}
+        href={page.href}
+        onPointerDown={handlePointerDown}
+        // onPointerUp={handlePointerUp}
+        onClick={onPageClick}
+        isActive={page.id === activePageId}
+      />
+    );
+  }
+
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  useAnimateReorder(parentRef, ".PageNavButton", "pageId");
+
   return (
-    <div className="PageNav">
-      {pages.map((page) => (
-        <PageNavButton
-          key={page.id}
-          id={page.id}
-          label={page.label}
-          href={page.href}
-          onPointerDown={handlePointerDown}
-          onClick={onPageClick}
-          isActive={page.id === activePageId}
-        />
-      ))}
+    <div className="PageNav" ref={parentRef}>
+      {buttons}
     </div>
   );
 }
