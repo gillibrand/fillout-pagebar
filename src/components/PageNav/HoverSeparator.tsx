@@ -22,7 +22,7 @@ export function HoverSeparator({ insertAt, onAdd }: Props) {
     clearTimeout(hoverTimeout.current);
     hoverTimeout.current = setTimeout(() => {
       setIsActive(true);
-    }, 400);
+    }, 300);
   }
 
   function handleLeave() {

@@ -46,7 +46,7 @@ function onDown(
   const startX = downEvent.clientX;
   const startY = downEvent.clientY;
 
-  // These compensate for how far the pointer is from the edge of the butto
+  // These compensate for how far the pointer is from the edge of the button
   const { x: targetX, y: targetY } = clickedButton.getBoundingClientRect();
   const dx = startX - targetX;
   const dy = startY - targetY;

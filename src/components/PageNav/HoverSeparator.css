@@ -43,6 +43,10 @@
     block-size: 1.25rem;
     cursor: pointer;
 
+    &:active {
+      background-color: #efefef;
+    }
+
     > * {
       display: block;
     }

@@ -3,12 +3,12 @@
   align-items: stretch;
 
   position: relative;
-  overflow: auto;
 
   &::before {
     content: "";
     position: absolute;
-    width: 100%;
+    left: 0.5rem;
+    right: 0.5rem;
     height: 1px;
     border-block-start: 1px #c0c0c0 dashed;
 
