@@ -2,12 +2,39 @@ body {
   margin: 0;
   padding: 0;
 }
+
 .App {
-  padding: 5rem 0;
+  padding: 2rem;
   height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: end;
+  flex-direction: column;
+  gap: 2rem;
+
+  /* justify-items: stretch; */
+  align-items: center;
 
   background: #f9fafb;
+}
+
+.page-content {
+  padding: 1rem;
+  border: solid 1px #e1e1e1;
+  border-radius: 1rem;
+  background-color: white;
+  flex-grow: 1;
+  align-content: stretch;
+  width: calc(100vw - 4rem);
+}
+
+.wrapper {
+  max-width: 85ch;
+  margin-inline: auto;
+}
+
+h1 {
+  font-size: 150%;
+}
+
+h2 {
+  font-size: 110%;
 }

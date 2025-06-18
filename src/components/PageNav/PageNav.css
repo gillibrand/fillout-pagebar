@@ -1,6 +1,7 @@
 .PageNav {
   display: flex;
   align-items: stretch;
+  justify-content: center;
 
   position: relative;
 
