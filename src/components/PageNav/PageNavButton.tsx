@@ -11,6 +11,13 @@ import Rename from "@icons/edit.svg?react";
 import Flag from "@icons/flag.svg?react";
 import Paste from "@icons/paste.svg?react";
 
+/**
+ * Selector for query with querySelector for picking out buttons from the. Added this here since I
+ * was late to add the Add Page button at the end. Really, that should share styles and not be the
+ * same control, but I'm rushing this a bit :( Just need to exclude the special Add button for now.
+ */
+export const PageNavButtonSelector = ".PageNavButton:not(.is-add)";
+
 interface Props {
   id: string;
   label: string;
@@ -21,13 +28,19 @@ interface Props {
   /**
    * On pointer down even that may be a click or drag.
    */
-  onPointerDown: React.PointerEventHandler;
+  onPointerDown?: React.PointerEventHandler;
 
   /**
    * On a known "click" or keyboard equivalent. Cannot be a drag.
    * @param id ID of this button.
    */
   onClick: (id: string) => void;
+
+  /**
+   * A bit of a hack to get the Add button in quickly. Was not listed in requirements, but is in
+   * Figma... so shoving in.
+   */
+  isAddButton?: boolean;
 }
 
 const menuItems: MenuItem[] = [
@@ -69,6 +82,7 @@ export function PageNavButton({
   onPointerDown,
   onClick,
   icon,
+  isAddButton,
 }: Props) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -90,10 +104,14 @@ export function PageNavButton({
   return (
     <>
       <div
-        className={cx("PageNavButton", { "is-active": isActive })}
+        className={cx("PageNavButton", {
+          "is-active": isActive,
+          "is-add": isAddButton,
+        })}
         onPointerDown={onPointerDown}
         data-page-id={id}
         ref={ref}
+        style={isAddButton ? { marginInlineStart: "1.5rem" } : undefined}
       >
         <div className="PageNavButton__icon">{icon ?? <Doc />}</div>
 

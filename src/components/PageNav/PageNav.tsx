@@ -1,10 +1,12 @@
 import { useAnimateReorder } from "@hooks/useAnimateReorder";
-import { ReactElement, useRef } from "react";
+import { ReactElement, useCallback, useRef } from "react";
 import { HoverSeparator } from "./HoverSeparator";
 import "./PageNav.css";
-import { PageNavButton } from "./PageNavButton";
+import { PageNavButton, PageNavButtonSelector } from "./PageNavButton";
 import { DropTarget } from "./types";
 import { cloneForDragAvatar, isInsideRect, showAt } from "./drag-util";
+
+import Plus from "@icons/add.svg?react";
 
 const ThresholdPx = 5;
 
@@ -102,7 +104,7 @@ function onDown(
     clickedButton.classList.add("invisible");
 
     const buttons = Array.from(
-      pageNav.querySelectorAll(".PageNavButton")
+      pageNav.querySelectorAll(PageNavButtonSelector)
     ) as HTMLElement[];
     if (!buttons.length) return;
     const buttonRects = buttons.map((b) => b.getBoundingClientRect());
@@ -158,7 +160,9 @@ function onDown(
     const clickedId = clickedButton.dataset.pageId!;
 
     const oldIds = (
-      Array.from(pageNav.querySelectorAll(".PageNavButton")) as HTMLElement[]
+      Array.from(
+        pageNav.querySelectorAll(PageNavButtonSelector)
+      ) as HTMLElement[]
     ).map((el) => el.dataset.pageId!);
 
     const oldIndex = oldIds.indexOf(clickedId);
@@ -268,19 +272,22 @@ export function PageNav({
     onDown(e, handleReorder, onPageClick);
   }
 
-  function handleOnAdd(pageName: string, atIndex: number) {
-    const id = nextId++;
+  const handleOnAdd = useCallback(
+    (pageName: string, atIndex: number) => {
+      const id = nextId++;
 
-    const newPage: PageInfo = {
-      label: pageName,
-      href: encodeURIComponent(pageName),
-      id: String(id),
-    };
+      const newPage: PageInfo = {
+        label: pageName,
+        href: encodeURIComponent(pageName),
+        id: String(id),
+      };
 
-    const newPages = [...pages];
-    newPages.splice(atIndex, 0, newPage);
-    onPagesChange(newPages);
-  }
+      const newPages = [...pages];
+      newPages.splice(atIndex, 0, newPage);
+      onPagesChange(newPages);
+    },
+    [onPagesChange, pages]
+  );
 
   const buttons = [];
 
@@ -311,9 +318,32 @@ export function PageNav({
     );
   }
 
+  const promptToAdd = useCallback(() => {
+    // XXX: copy and pasted code!
+    const newPageName = window.prompt("[Ugly prompt for demo] New page name:");
+    if (newPageName) {
+      handleOnAdd(newPageName, pages.length);
+    }
+  }, [pages.length, handleOnAdd]);
+
   return (
     <div className="PageNav" ref={parentRef}>
       {buttons}
+
+      {/* This is NOT right, since this should be a <button/> for an action. I'm just reusing this is finish this faster.
+          I can't just convert to a button since there is already a button in the controls.
+      */}
+      <PageNavButton
+        key={"add"}
+        id={"add"}
+        label="Add page"
+        href={""}
+        onPointerDown={promptToAdd}
+        onClick={promptToAdd}
+        isActive={false}
+        icon={<Plus />}
+        isAddButton={true}
+      />
     </div>
   );
 }

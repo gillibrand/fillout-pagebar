@@ -57,7 +57,7 @@
 }
 
 .PageNavButton.is-active,
-/* .PageNavButton:has(:focus-visible), */
+.PageNavButton.is-add,
 .PageNavButton:has(:focus) {
   color: #1a1a1a;
   background-color: white;
@@ -69,6 +69,11 @@
   }
 }
 
+.PageNavButton.is-add {
+  .PageNavButton__icon {
+    color: black;
+  }
+}
 .PageNavButton.invisible {
   visibility: hidden;
 
