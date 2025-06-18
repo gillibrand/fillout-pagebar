@@ -88,3 +88,9 @@
   border-color: #2f71e3;
   outline: solid 2px #c5d7f4;
 }
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

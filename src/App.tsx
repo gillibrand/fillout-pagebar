@@ -18,9 +18,21 @@ function App() {
 
   const [activePageId, setActivePageId] = useState(pages[0].id);
 
-  const handlePagesChange = useCallback((newPages: PageInfo[]) => {
-    setPages(newPages);
-  }, []);
+  const handlePagesChange = useCallback(
+    (newPages: PageInfo[]) => {
+      // bit of a hack to activate the first new page id in the new set that wasn't there before.
+      const newIds = new Set(newPages.map((page) => page.id));
+      pages.forEach((oldPage) => newIds.delete(oldPage.id));
+
+      for (const newId of newIds) {
+        setActivePageId(newId);
+        break;
+      }
+
+      setPages(newPages);
+    },
+    [pages]
+  );
 
   function handlePageClick(id: string) {
     setActivePageId(id);

@@ -1,5 +1,6 @@
 .Menu {
   position: absolute;
+  cursor: default;
   top: 0;
   left: 0;
   border: solid 1px #e1e1e1;

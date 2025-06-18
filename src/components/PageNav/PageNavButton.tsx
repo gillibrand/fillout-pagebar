@@ -95,7 +95,7 @@ export function PageNavButton({
       <a
         href={href}
         onClick={handleAnchorClick}
-        className="PageNavButton__link"
+        className="PageNavButton__link truncate"
       >
         {label}
       </a>

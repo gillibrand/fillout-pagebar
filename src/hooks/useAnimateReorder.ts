@@ -20,7 +20,7 @@ export function useAnimateReorder(
   elementSelector: string,
   dataKey: string
 ) {
-  const previousRects = useRef<Map<string, DOMRect>>(new Map());
+  const previousRectsRef = useRef<Map<string, DOMRect>>(new Map());
   const anims = useRef<Animation[]>([]);
 
   useLayoutEffect(() => {
@@ -32,38 +32,42 @@ export function useAnimateReorder(
     ) as HTMLElement[];
 
     const newRects = new Map<string, DOMRect>();
+
     for (const el of elements) {
       const key = el.dataset[dataKey];
       if (key) newRects.set(key, el.getBoundingClientRect());
     }
 
-    for (const el of elements) {
-      const key = el.dataset[dataKey];
-      const oldRect = previousRects.current.get(key!);
-      const newRect = newRects.get(key!);
+    // Bail on animation of size is the same. We only animate reorder here, not Add or remove
+    if (newRects.size === previousRectsRef.current.size) {
+      for (const el of elements) {
+        const key = el.dataset[dataKey];
+        const oldRect = previousRectsRef.current.get(key!);
+        const newRect = newRects.get(key!);
 
-      if (!oldRect || !newRect) continue;
+        if (!oldRect || !newRect) continue;
 
-      const dx = oldRect.left - newRect.left;
-      const dy = oldRect.top - newRect.top;
+        const dx = oldRect.left - newRect.left;
+        const dy = oldRect.top - newRect.top;
 
-      if (dx || dy) {
-        const anim = el.animate(
-          [
-            { transform: `translate(${dx}px, ${dy}px)` },
-            { transform: "translate(0, 0)" },
-          ],
-          {
-            duration: 200,
-            easing: "ease-in-out",
-          }
-        );
+        if (dx || dy) {
+          const anim = el.animate(
+            [
+              { transform: `translate(${dx}px, ${dy}px)` },
+              { transform: "translate(0, 0)" },
+            ],
+            {
+              duration: 200,
+              easing: "ease-in-out",
+            }
+          );
 
-        anims.current.push(anim);
+          anims.current.push(anim);
+        }
       }
     }
 
-    previousRects.current = newRects;
+    previousRectsRef.current = newRects;
 
     return () => {
       // On cleanup finish all animations. This prevents overlapping animation, plus is expected clean up on unmount

@@ -3,6 +3,7 @@
   align-items: stretch;
 
   position: relative;
+  overflow: auto;
 
   &::before {
     content: "";

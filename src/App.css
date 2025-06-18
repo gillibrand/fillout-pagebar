@@ -3,7 +3,7 @@ body {
   padding: 0;
 }
 .App {
-  padding: 5rem;
+  padding: 5rem 0;
   height: 100vh;
   display: flex;
   justify-content: center;

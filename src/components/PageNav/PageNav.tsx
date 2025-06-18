@@ -232,6 +232,9 @@ interface Props {
   onPageClick: (id: string) => unknown;
 }
 
+// Should use UUID or DB unique ID, but good enough for demo
+let nextId = 1000;
+
 export function PageNav({
   pages,
   onPagesChange,
@@ -251,11 +254,33 @@ export function PageNav({
     onDown(e, handleReorder, onPageClick);
   }
 
+  function handleOnAdd(pageName: string, atIndex: number) {
+    const id = nextId++;
+
+    const newPage: PageInfo = {
+      label: pageName,
+      href: encodeURIComponent(pageName),
+      id: String(id),
+    };
+
+    const newPages = [...pages];
+    newPages.splice(atIndex, 0, newPage);
+    onPagesChange(newPages);
+  }
+
   const buttons = [];
 
-  for (const page of pages) {
+  for (let i = 0; i < pages.length; i++) {
+    const page = pages[i];
+
     if (buttons.length) {
-      buttons.push(<HoverSeparator key={`sep-${page.id}`} />);
+      buttons.push(
+        <HoverSeparator
+          key={`sep-${page.id}`}
+          insertAt={i}
+          onAdd={handleOnAdd}
+        />
+      );
     }
 
     buttons.push(
