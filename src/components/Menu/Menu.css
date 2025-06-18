@@ -48,7 +48,7 @@
 
 .Menu__heading {
   font-weight: bold;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.5rem;
 }
 
 .MenuItem__button {
@@ -61,7 +61,7 @@
 
   gap: 0.5rem;
   align-items: center;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 2rem 0.5rem 0.5rem;
   width: 100%;
   cursor: pointer;
   color: inherit;
@@ -72,5 +72,5 @@
 }
 
 hr.MenuItem__separator {
-  margin-inline: 1rem;
+  margin: 0.5rem;
 }

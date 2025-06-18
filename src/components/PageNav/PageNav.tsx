@@ -190,7 +190,7 @@ function onDown(
     if (!dropTargets || !avatar) return;
 
     isDrag = true;
-    showAt(avatar, e, dx, dy);
+    showAt(avatar, { clientX: e.clientX, clientY: targetY }, dx, 0);
 
     for (const dropTarget of dropTargets) {
       if (isInsideRect(e, dropTarget)) {

@@ -1,14 +1,14 @@
-import { cx } from "@util/cx";
-import "./PageNavButton.css";
+import { Menu, MenuItem } from "@components/Menu/Menu";
 import Doc from "@icons/doc.svg?react";
 import More from "@icons/more.svg?react";
-import { ReactElement, useRef, useState } from "react";
-import { Menu, MenuItem } from "@components/Menu/Menu";
+import { cx } from "@util/cx";
+import { ReactElement, useCallback, useRef, useState } from "react";
+import "./PageNavButton.css";
 
-import Flag from "@icons/flag.svg?react";
-import Rename from "@icons/edit.svg?react";
 import Duplicate from "@icons/copy.svg?react";
 import Delete from "@icons/delete.svg?react";
+import Rename from "@icons/edit.svg?react";
+import Flag from "@icons/flag.svg?react";
 import Paste from "@icons/paste.svg?react";
 
 interface Props {
@@ -83,6 +83,10 @@ export function PageNavButton({
     setIsMenuOpen((prevOpen) => !prevOpen);
   }
 
+  const handleClose = useCallback(() => {
+    setIsMenuOpen(false);
+  }, []);
+
   return (
     <div
       className={cx("PageNavButton", { "is-active": isActive })}
@@ -109,7 +113,7 @@ export function PageNavButton({
           heading="Settings"
           items={menuItems}
           near={ref.current}
-          onClose={() => setIsMenuOpen(false)}
+          onClose={handleClose}
         />
       )}
     </div>

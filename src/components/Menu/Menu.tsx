@@ -26,7 +26,6 @@ interface MenuProps {
   open: boolean;
 
   /**
-   * Callback when this menu really closes. Fires after close animation.
    */
   onClose: () => void;
 
@@ -75,19 +74,23 @@ export function Menu({ open, heading, items, near, onClose }: MenuProps) {
     undefined
   );
 
-  const animateClose = useCallback(async () => {
+  const animateClose = useCallback(() => {
     const menu = ref.current;
     if (!menu) return;
 
-    await menu.animate(
+    const anim = menu.animate(
       {
         scale: [1, 0.95],
         opacity: [1, 0],
       },
       AnimOptions
-    ).finished;
+    );
 
-    onClose();
+    anim.finished.then(() => {
+      onClose();
+    });
+
+    return anim;
   }, [onClose]);
 
   useLayoutEffect(() => {
@@ -118,7 +121,10 @@ export function Menu({ open, heading, items, near, onClose }: MenuProps) {
         anim.cancel();
       };
     } else {
-      animateClose();
+      const anim = animateClose();
+      return () => {
+        anim?.cancel();
+      };
     }
   }, [near, open, animateClose]);
 
@@ -133,6 +139,7 @@ export function Menu({ open, heading, items, near, onClose }: MenuProps) {
       ref={ref}
       style={style}
       onBlur={handleBlur}
+      onClick={animateClose}
     >
       {heading && (
         <>
