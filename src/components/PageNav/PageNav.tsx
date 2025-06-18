@@ -290,7 +290,6 @@ export function PageNav({
         label={page.label}
         href={page.href}
         onPointerDown={handlePointerDown}
-        // onPointerUp={handlePointerUp}
         onClick={onPageClick}
         isActive={page.id === activePageId}
         icon={page.icon}

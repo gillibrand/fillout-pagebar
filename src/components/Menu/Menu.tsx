@@ -67,9 +67,11 @@ export function Menu({ open, heading, items, near, onClose }: MenuProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Get focus so we can clone on blur.
     ref.current?.focus();
   }, []);
 
+  // Style for custom positioning
   const [style, setStyle] = useState<React.CSSProperties | undefined>(
     undefined
   );
@@ -128,8 +130,18 @@ export function Menu({ open, heading, items, near, onClose }: MenuProps) {
     }
   }, [near, open, animateClose]);
 
-  function handleBlur() {
+  function handleBlur(e: React.FocusEvent) {
+    if (ref.current && !ref.current.contains(e.relatedTarget)) {
+      // if focus moved outside, close
+      animateClose();
+    }
+  }
+
+  function handleClick(e: React.MouseEvent) {
+    e.preventDefault();
     animateClose();
+
+    console.log("Clicked menu!");
   }
 
   return createPortal(
@@ -139,7 +151,7 @@ export function Menu({ open, heading, items, near, onClose }: MenuProps) {
       ref={ref}
       style={style}
       onBlur={handleBlur}
-      onClick={animateClose}
+      onClick={handleClick}
     >
       {heading && (
         <>

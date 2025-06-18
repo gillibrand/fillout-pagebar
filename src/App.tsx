@@ -81,6 +81,7 @@ function App() {
               like React DnD in the past. I would investigate alternatives for a
               real projects.
             </li>
+            <li>The menu doesn't do anything or support keyboard nav.</li>
             <li>
               I've used private CSS util libraries similar to Tailwind in the
               past, but don't know Tailwind itself well enough for this quick

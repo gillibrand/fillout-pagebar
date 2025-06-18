@@ -88,24 +88,26 @@ export function PageNavButton({
   }, []);
 
   return (
-    <div
-      className={cx("PageNavButton", { "is-active": isActive })}
-      onPointerDown={onPointerDown}
-      data-page-id={id}
-      ref={ref}
-    >
-      <div className="PageNavButton__icon">{icon ?? <Doc />}</div>
-
-      <a
-        href={href}
-        onClick={handleAnchorClick}
-        className="PageNavButton__link truncate"
+    <>
+      <div
+        className={cx("PageNavButton", { "is-active": isActive })}
+        onPointerDown={onPointerDown}
+        data-page-id={id}
+        ref={ref}
       >
-        {label}
-      </a>
-      <button className="PageNavButton__menu-button" onClick={toggleMenu}>
-        <More />
-      </button>
+        <div className="PageNavButton__icon">{icon ?? <Doc />}</div>
+
+        <a
+          href={href}
+          onClick={handleAnchorClick}
+          className="PageNavButton__link truncate"
+        >
+          {label}
+        </a>
+        <button className="PageNavButton__menu-button" onClick={toggleMenu}>
+          <More />
+        </button>
+      </div>
 
       {isMenuOpen && (
         <Menu
@@ -116,6 +118,6 @@ export function PageNavButton({
           onClose={handleClose}
         />
       )}
-    </div>
+    </>
   );
 }
