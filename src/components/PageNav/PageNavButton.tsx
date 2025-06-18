@@ -45,7 +45,11 @@ export function PageNavButton({
     >
       <div className="PageNavButton__icon">{icon ?? <Doc />}</div>
 
-      <a href={href} onClick={handleAnchorClick}>
+      <a
+        href={href}
+        onClick={handleAnchorClick}
+        className="PageNavButton__link"
+      >
         {label}
       </a>
       <button className="PageNavButton__menu-button">

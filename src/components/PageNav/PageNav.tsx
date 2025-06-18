@@ -40,8 +40,9 @@ function onDown(
   const pageNav = target.closest(".PageNav") as HTMLDivElement;
   const clickedButton = target.closest(".PageNavButton") as HTMLDivElement;
   if (!pageNav || !clickedButton) return;
-
   let avatar: HTMLElement | null;
+
+  (clickedButton.querySelector(".PageNavButton__link") as HTMLElement)?.focus();
 
   // Lock pointer to this drag and allow moving off page
   pageNav.setPointerCapture(downEvent.pointerId);

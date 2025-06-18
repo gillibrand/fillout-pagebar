@@ -1,0 +1,69 @@
+.Menu {
+  border: solid 1px #e1e1e1;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  outline: none;
+
+  hr {
+    border-width: 0;
+    border-block-start: solid 1px #e1e1e1;
+    height: 1px;
+    margin: 0;
+  }
+}
+
+.Menu__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.MenuItem {
+  svg {
+    color: #9da4b2;
+  }
+
+  &.is-danger {
+    &,
+    svg {
+      color: #ef494f;
+    }
+  }
+
+  &.is-primary {
+    svg {
+      color: #2f71e3;
+    }
+  }
+}
+
+.Menu__heading {
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+}
+
+.MenuItem__button {
+  appearance: none;
+
+  display: flex;
+  border: none;
+  margin: 0;
+  background-color: transparent;
+
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  width: 100%;
+  cursor: pointer;
+  color: inherit;
+
+  &:hover {
+    background-color: #eee;
+  }
+}
+
+hr.MenuItem__separator {
+  margin-inline: 1rem;
+}
