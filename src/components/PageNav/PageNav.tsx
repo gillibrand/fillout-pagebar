@@ -23,10 +23,13 @@ function onDown(
   onReorder: (id: string[]) => unknown,
   onPageChange: (id: string) => unknown
 ) {
-  downEvent.preventDefault();
-
   const target = downEvent.target as HTMLElement;
   if (!target) return;
+
+  const nativeButton = target.closest("button");
+  if (nativeButton) return;
+
+  downEvent.preventDefault();
 
   // TODO: handle scrolled page offset
   const startX = downEvent.clientX;

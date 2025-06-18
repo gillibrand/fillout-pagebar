@@ -2,7 +2,14 @@ import { cx } from "@util/cx";
 import "./PageNavButton.css";
 import Doc from "@icons/doc.svg?react";
 import More from "@icons/more.svg?react";
-import { ReactElement } from "react";
+import { ReactElement, useRef, useState } from "react";
+import { Menu, MenuItem } from "@components/Menu/Menu";
+
+import Flag from "@icons/flag.svg?react";
+import Rename from "@icons/edit.svg?react";
+import Duplicate from "@icons/copy.svg?react";
+import Delete from "@icons/delete.svg?react";
+import Paste from "@icons/paste.svg?react";
 
 interface Props {
   id: string;
@@ -23,6 +30,37 @@ interface Props {
   onClick: (id: string) => void;
 }
 
+const menuItems: MenuItem[] = [
+  {
+    id: "first",
+    label: "Set as first page",
+    icon: <Flag />,
+    type: "primary",
+  },
+  {
+    id: "rename",
+    label: "Rename",
+    icon: <Rename />,
+  },
+  {
+    id: "copy",
+    label: "Copy",
+    icon: <Paste />,
+  },
+  {
+    id: "duplicate",
+    label: "Duplicate",
+    icon: <Duplicate />,
+  },
+  {
+    id: "delete",
+    label: "Delete",
+    icon: <Delete />,
+    type: "danger",
+    isSeparated: true,
+  },
+];
+
 export function PageNavButton({
   id,
   label,
@@ -32,9 +70,17 @@ export function PageNavButton({
   onClick,
   icon,
 }: Props) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   function handleAnchorClick(e: React.MouseEvent) {
     e.preventDefault();
     onClick(id);
+  }
+
+  const ref = useRef<HTMLDivElement>(null);
+
+  function toggleMenu() {
+    setIsMenuOpen((prevOpen) => !prevOpen);
   }
 
   return (
@@ -42,6 +88,7 @@ export function PageNavButton({
       className={cx("PageNavButton", { "is-active": isActive })}
       onPointerDown={onPointerDown}
       data-page-id={id}
+      ref={ref}
     >
       <div className="PageNavButton__icon">{icon ?? <Doc />}</div>
 
@@ -52,9 +99,19 @@ export function PageNavButton({
       >
         {label}
       </a>
-      <button className="PageNavButton__menu-button">
+      <button className="PageNavButton__menu-button" onClick={toggleMenu}>
         <More />
       </button>
+
+      {isMenuOpen && (
+        <Menu
+          open={isMenuOpen}
+          heading="Settings"
+          items={menuItems}
+          near={ref.current}
+          onClose={() => setIsMenuOpen(false)}
+        />
+      )}
     </div>
   );
 }

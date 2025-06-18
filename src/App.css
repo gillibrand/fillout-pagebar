@@ -1,7 +1,13 @@
+body {
+  margin: 0;
+  padding: 0;
+}
 .App {
   padding: 5rem;
-  display: grid;
-  place-items: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: end;
 
   background: #f9fafb;
 }
