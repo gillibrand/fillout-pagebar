@@ -102,7 +102,7 @@ export function Menu({ open, heading, items, near, onClose }: MenuProps) {
       const nearRect = near.getBoundingClientRect();
       const refRect = ref.current.getBoundingClientRect();
       setStyle({
-        top: `${nearRect.y - refRect.height - 8}px`,
+        top: `${nearRect.y - refRect.height - 8 + window.pageYOffset}px`,
         left: `${nearRect.x}px`,
       });
     }

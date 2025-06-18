@@ -4,7 +4,7 @@ import { HoverSeparator } from "./HoverSeparator";
 import "./PageNav.css";
 import { PageNavButton, PageNavButtonSelector } from "./PageNavButton";
 import { DropTarget } from "./types";
-import { cloneForDragAvatar, isInsideRect, showAt } from "./drag-util";
+import { cloneForDragAvatar, isInsideXRect, showAt } from "./drag-util";
 
 import Plus from "@icons/add.svg?react";
 
@@ -197,7 +197,7 @@ function onDown(
     showAt(avatar, { clientX: e.clientX, clientY: targetY }, dx, 0);
 
     for (const dropTarget of dropTargets) {
-      if (isInsideRect(e, dropTarget)) {
+      if (isInsideXRect(e, dropTarget)) {
         const oldDropTarget = currentTarget;
         currentTarget = dropTarget;
 

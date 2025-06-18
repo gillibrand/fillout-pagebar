@@ -52,16 +52,17 @@ function App() {
 
           <ul>
             <li>
-              Focus ring should always be visible on keyboard (:focus-visible)
-              access. Use <kbd>Tab</kbd> to move between tabs.
+              Focus ring should <em>only</em> be visible on keyboard
+              (:focus-visible) access. Use <kbd>Tab</kbd> to move between tabs.
             </li>
             <li>
               Space should always be reserved for the <kbd>︙</kbd> (more) menu
               button to prevent the tabs from resizing.
             </li>
             <li>
-              Add Tab buttons should only show on hover. They are <b>not</b>{" "}
-              keyboard accessible here, but should/could be.
+              Add Tab buttons should only show on hover. They are{" "}
+              <strong>not</strong> keyboard accessible here, but should/could
+              be.
             </li>
             <li>
               Actual icons don't matter. I just used similar ones from Material
@@ -77,9 +78,9 @@ function App() {
 
           <ul>
             <li>
-              I just did a custom drag-and-drop implementation since I didn't
-              like React DnD in the past. I would investigate alternatives for a
-              real projects.
+              I made a custom drag-and-drop implementation since I didn't like
+              React DnD in the past (slow with large data; hard to customize). I
+              would investigate alternatives for a real projects.
             </li>
             <li>The menu doesn't do anything or support keyboard nav.</li>
             <li>
@@ -87,6 +88,10 @@ function App() {
               past, but don't know Tailwind itself well enough for this quick
               project. I just threw any quick-and-dirty CSS at this to power
               through a first pass.
+            </li>
+            <li>
+              The <code>Add page</code> button is just a tweaked "tab". It
+              should really be a <code>button</code>.
             </li>
           </ul>
         </>

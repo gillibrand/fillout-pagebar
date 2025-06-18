@@ -1,13 +1,8 @@
 import { Rect } from "./types";
 
-export function isInsideRect(event: PointerEvent, rect: Rect): boolean {
-  const { clientX, clientY } = event;
-  return (
-    clientX >= rect.x &&
-    clientX <= rect.x + rect.width &&
-    clientY >= rect.y &&
-    clientY <= rect.y + rect.height
-  );
+export function isInsideXRect(event: PointerEvent, rect: Rect): boolean {
+  const { clientX } = event;
+  return clientX >= rect.x && clientX <= rect.x + rect.width;
 }
 
 export function cloneForDragAvatar(original: HTMLElement): HTMLElement {
