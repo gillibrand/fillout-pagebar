@@ -1,8 +1,9 @@
 .HoverSeparator {
   padding: 0 0.75rem;
-  transition: padding 100ms ease-in-out;
+  transition: padding 150ms ease-in-out;
   display: grid;
   place-items: center;
+  position: relative;
 
   &.is-active {
     padding: 0 2rem;
@@ -11,6 +12,9 @@
 
 .HoverSeparator__button {
   position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
 
   visibility: hidden;
   appearance: none;
@@ -21,8 +25,10 @@
   padding: 0;
   overflow: hidden;
 
-  inline-size: 0.5rem;
-  block-size: 0.5rem;
+  inline-size: 1rem;
+  block-size: 1rem;
+  scale: 0.5;
+  transition: scale 150ms ease-in-out;
 
   display: grid;
   place-items: center;
@@ -42,9 +48,10 @@
     inline-size: 1.25rem;
     block-size: 1.25rem;
     cursor: pointer;
+    scale: 1;
 
     &:active {
-      background-color: #efefef;
+      background-color: #e1e1e1;
     }
 
     > * {

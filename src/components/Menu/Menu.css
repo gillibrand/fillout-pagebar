@@ -5,7 +5,7 @@
   left: 0;
   border: solid 1px #e1e1e1;
   background-color: white;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -19,15 +19,6 @@
   }
 
   transform-origin: bottom left;
-  /* opacity: 0; */
-  /* scale: 0.8; */
-
-  /* transform: all 200ms ease-in-out; */
-
-  /* &.is-visible {
-    opacity: 1;
-    scale: 1;
-  } */
 }
 
 .Menu__list {
