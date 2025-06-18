@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { useCallback, useLayoutEffect, useRef } from "react";
 
 /**
  * Watches for layout changes to element under a parent container. Animates their positions from old
@@ -14,6 +14,8 @@ import { useLayoutEffect, useRef } from "react";
  * @param dataKey The name of the dataset key that is used to ID the elements. We don't use HTML ID
  * since those must be unique on a page. We don't use React key since we can't access that from
  * HTML.
+ *
+ * @returns Function to refresh its layout cache. This is needed before
  */
 export function useAnimateReorder(
   containerRef: React.RefObject<HTMLElement>,
@@ -23,22 +25,40 @@ export function useAnimateReorder(
   const previousRectsRef = useRef<Map<string, DOMRect>>(new Map());
   const anims = useRef<Animation[]>([]);
 
-  useLayoutEffect(() => {
+  const getElements = useCallback((): HTMLElement[] => {
     const container = containerRef.current;
-    if (!container) return;
+    if (!container) return [];
 
-    const elements = Array.from(
+    return Array.from(
       container.querySelectorAll(elementSelector)
     ) as HTMLElement[];
+  }, [elementSelector, containerRef]);
 
-    const newRects = new Map<string, DOMRect>();
+  const getRects = useCallback(
+    (elements: HTMLElement[]): Map<string, DOMRect> => {
+      const rects = new Map();
 
-    for (const el of elements) {
-      const key = el.dataset[dataKey];
-      if (key) newRects.set(key, el.getBoundingClientRect());
-    }
+      for (const el of elements) {
+        const key = el.dataset[dataKey];
+        if (key) rects.set(key, el.getBoundingClientRect());
+      }
 
-    // Bail on animation of size is the same. We only animate reorder here, not Add or remove
+      return rects;
+    },
+    [dataKey]
+  );
+
+  //
+  const forceUpdate = useCallback(() => {
+    const elements = getElements();
+    previousRectsRef.current = getRects(elements);
+  }, [getRects, getElements]);
+
+  useLayoutEffect(() => {
+    const elements = getElements();
+    const newRects = getRects(elements);
+
+    // Bail on animation if size is the same. We only animate reorder here, not Add or remove
     if (newRects.size === previousRectsRef.current.size) {
       for (const el of elements) {
         const key = el.dataset[dataKey];
@@ -75,4 +95,6 @@ export function useAnimateReorder(
       anims.current = [];
     };
   });
+
+  return forceUpdate;
 }

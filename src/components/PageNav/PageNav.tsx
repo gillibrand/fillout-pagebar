@@ -241,7 +241,21 @@ export function PageNav({
   onPageClick,
   activePageId,
 }: Props) {
+  // This handles the reorder animation as we drag. The HoverSeparators make this is a little
+  // trickier that a homogenous container.
+  const parentRef = useRef<HTMLDivElement>(null);
+  const refreshDnDLayout = useAnimateReorder(
+    parentRef,
+    ".PageNavButton",
+    "pageId"
+  );
+
   function handlePointerDown(e: React.PointerEvent<HTMLElement>) {
+    // Really the animation hook should be smarter about refreshing itself, but doing it before a
+    // click means the last layout will always be fresh if a DnD starts. May need to think about
+    // this...
+    refreshDnDLayout();
+
     /**
      * @param ids New order of page IDs to rerender.
      */
@@ -296,10 +310,6 @@ export function PageNav({
       />
     );
   }
-
-  const parentRef = useRef<HTMLDivElement>(null);
-
-  useAnimateReorder(parentRef, ".PageNavButton", "pageId");
 
   return (
     <div className="PageNav" ref={parentRef}>
