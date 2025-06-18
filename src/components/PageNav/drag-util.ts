@@ -24,8 +24,10 @@ export function cloneForDragAvatar(original: HTMLElement): HTMLElement {
 
 export function showAt(
   el: HTMLElement,
-  e: { clientX: number; clientY: number }
+  e: { clientX: number; clientY: number },
+  dx: number,
+  dy: number
 ) {
-  el.style.left = `${e.clientX}px`;
-  el.style.top = `${e.clientY}px`;
+  el.style.left = `${e.clientX - dx}px`;
+  el.style.top = `${e.clientY - dy}px`;
 }

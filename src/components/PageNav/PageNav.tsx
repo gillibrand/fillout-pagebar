@@ -31,9 +31,6 @@ function onDown(
 
   downEvent.preventDefault();
 
-  // TODO: handle scrolled page offset
-  const startX = downEvent.clientX;
-
   // Only count it as a drag if past ThresholdPx, otherwise it's a wiggly click
   let overThreshold = false;
 
@@ -44,6 +41,15 @@ function onDown(
   const clickedButton = target.closest(".PageNavButton") as HTMLDivElement;
   if (!pageNav || !clickedButton) return;
   let avatar: HTMLElement | null;
+
+  // TODO: handle scrolled page offset
+  const startX = downEvent.clientX;
+  const startY = downEvent.clientY;
+
+  // These compensate for how far the pointer is from the edge of the butto
+  const { x: targetX, y: targetY } = clickedButton.getBoundingClientRect();
+  const dx = startX - targetX;
+  const dy = startY - targetY;
 
   (clickedButton.querySelector(".PageNavButton__link") as HTMLElement)?.focus();
 
@@ -90,7 +96,7 @@ function onDown(
     avatar = cloneForDragAvatar(clickedButton);
     document.body.appendChild(avatar);
 
-    showAt(avatar, downEvent);
+    showAt(avatar, downEvent, dx, dy);
 
     // Hide original button, but still take up space
     clickedButton.classList.add("invisible");
@@ -184,7 +190,7 @@ function onDown(
     if (!dropTargets || !avatar) return;
 
     isDrag = true;
-    showAt(avatar, e);
+    showAt(avatar, e, dx, dy);
 
     for (const dropTarget of dropTargets) {
       if (isInsideRect(e, dropTarget)) {
